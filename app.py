@@ -1,15 +1,12 @@
 """Streamlit Frontend Application for Resume Screening Automation System.
 
-Integrates seamlessly with the backend modules (utils.resume_pipeline, utils.skills, utils.exporter)
-to provide an interactive web interface for uploading Job Descriptions and PDF resumes,
-visualizing candidate match scores, reading candidate summaries, and downloading CSV/JSON reports.
+Serves purely as a presentation layer for the backend screening engine.
+All processing, metric calculation, data formatting, and report string generation
+are delegated to backend modules.
 """
 
 import tempfile
 from pathlib import Path
-import json
-import csv
-import io
 from typing import List, Dict, Any
 
 import streamlit as st
@@ -17,7 +14,12 @@ import streamlit as st
 # Backend Imports
 from utils.skills import load_skills_db
 from utils.resume_pipeline import process_resume_batch
-from utils.exporter import prepare_export_records
+from utils.exporter import (
+    format_candidate_table_records,
+    generate_csv_string,
+    generate_json_string,
+)
+from utils.scorer import get_screening_summary_metrics
 import config
 
 
@@ -150,17 +152,14 @@ def main():
 
     st.divider()
 
-    # Executive Overview Metrics
-    total_candidates = len(results)
-    shortlisted = len([r for r in results if r["recommendation"] == "Shortlisted"])
-    consider = len([r for r in results if r["recommendation"] == "Consider"])
-    rejected = len([r for r in results if r["recommendation"] == "Rejected"])
+    # Executive Overview Metrics (Calculated by Backend)
+    metrics = get_screening_summary_metrics(results)
 
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Total Candidates", total_candidates)
-    m2.metric("Shortlisted (≥80%)", shortlisted, delta_color="normal")
-    m3.metric("Consider (60-79%)", consider, delta_color="off")
-    m4.metric("Rejected (<60%)", rejected, delta_color="inverse")
+    m1.metric("Total Candidates", metrics["total"])
+    m2.metric("Shortlisted (≥80%)", metrics["shortlisted"], delta_color="normal")
+    m3.metric("Consider (60-79%)", metrics["consider"], delta_color="off")
+    m4.metric("Rejected (<60%)", metrics["rejected"], delta_color="inverse")
 
     st.divider()
 
@@ -171,18 +170,8 @@ def main():
     with tab_table:
         st.subheader("Candidate Screening Results")
 
-        # Format dataframe for clean Streamlit table display
-        table_records = []
-        for r in results:
-            table_records.append({
-                "Candidate Name": r["candidate_name"],
-                "Email": r["email"],
-                "Experience": f"{r['experience_years']} yrs",
-                "Matched Skills": ", ".join(r["matched_skills"]) if r["matched_skills"] else "None",
-                "Final Score": f"{r['final_score']}%",
-                "Recommendation": r["recommendation"],
-                "Resume Filename": r["resume_filename"],
-            })
+        # Format dataframe for clean Streamlit table display (Delegated to Backend)
+        table_records = format_candidate_table_records(results)
 
         st.dataframe(
             table_records,
@@ -198,28 +187,23 @@ def main():
         st.subheader("📥 Export Results")
         d1, d2 = st.columns(2)
 
-        # Prepare CSV Data
-        flat_records = prepare_export_records(results)
-        csv_buffer = io.StringIO()
-        fieldnames = list(flat_records[0].keys()) if flat_records else []
-        writer = csv.DictWriter(csv_buffer, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(flat_records)
+        # Prepare CSV Data (Delegated to Backend Exporter)
+        csv_data = generate_csv_string(results)
 
         d1.download_button(
             label="📄 Download CSV Report",
-            data=csv_buffer.getvalue(),
+            data=csv_data,
             file_name="shortlisted_candidates.csv",
             mime="text/csv",
             use_container_width=True
         )
 
-        # Prepare JSON Data
-        json_str = json.dumps(results, indent=2, ensure_ascii=False)
+        # Prepare JSON Data (Delegated to Backend Exporter)
+        json_data = generate_json_string(results)
 
         d2.download_button(
             label="📦 Download JSON Report",
-            data=json_str,
+            data=json_data,
             file_name="shortlisted_candidates.json",
             mime="application/json",
             use_container_width=True

@@ -158,3 +158,25 @@ def rank_candidates(candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         key=lambda c: (c.get("final_score", 0.0), c.get("candidate_name", "")),
         reverse=True
     )
+
+
+def get_screening_summary_metrics(candidates: List[Dict[str, Any]]) -> Dict[str, int]:
+    """Calculates summary count metrics across a list of candidate results.
+
+    Args:
+        candidates (List[Dict[str, Any]]): Processed candidate dictionaries.
+
+    Returns:
+        Dict[str, int]: Summary counts for total, shortlisted, consider, and rejected candidates.
+    """
+    total = len(candidates)
+    shortlisted = len([c for c in candidates if c.get("recommendation") == config.RECOMMENDATION_SHORTLISTED])
+    consider = len([c for c in candidates if c.get("recommendation") == config.RECOMMENDATION_CONSIDER])
+    rejected = len([c for c in candidates if c.get("recommendation") == config.RECOMMENDATION_REJECTED])
+
+    return {
+        "total": total,
+        "shortlisted": shortlisted,
+        "consider": consider,
+        "rejected": rejected,
+    }
