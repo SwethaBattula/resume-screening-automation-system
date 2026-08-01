@@ -1,8 +1,7 @@
 """Streamlit Frontend Application for Resume Screening Automation System.
 
-Provides a clean presentation layer for uploading Job Descriptions and PDF resumes,
-visualizing candidate match scores, reading executive candidate summaries,
-and downloading CSV/JSON reports.
+Provides a clean presentation layer built entirely with native Streamlit layout components
+(st.columns, st.container, st.markdown, st.write) without any dependency on pandas or pyarrow.
 """
 
 import tempfile
@@ -166,16 +165,39 @@ def main():
     # Main Tab Layout: Results Table & Candidate Detail View
     tab_table, tab_details = st.tabs(["📊 Candidate Rankings Table", "🔍 Detailed Candidate Card"])
 
-    # TAB 1: Candidates Table
+    # TAB 1: Candidates Table (Custom table built with st.columns & st.container without pandas)
     with tab_table:
         st.subheader("Candidate Screening Results")
 
-        # Format records for clean table display without pandas
         table_records = format_candidate_table_records(results)
 
-        # Render plain Python list[dict] using st.table()
         if table_records:
-            st.table(table_records)
+            # Custom Table Header
+            h1, h2, h3, h4, h5 = st.columns([2.5, 1.2, 3.5, 1.2, 1.5])
+            h1.markdown("**Candidate Name**")
+            h2.markdown("**Experience**")
+            h3.markdown("**Matched Skills**")
+            h4.markdown("**Score**")
+            h5.markdown("**Recommendation**")
+            st.divider()
+
+            # Custom Table Rows
+            for row in table_records:
+                with st.container():
+                    c1, c2, c3, c4, c5 = st.columns([2.5, 1.2, 3.5, 1.2, 1.5])
+                    c1.write(row.get("Candidate Name", "Unknown"))
+                    c2.write(row.get("Experience", "0 yrs"))
+                    c3.write(row.get("Matched Skills", "None"))
+                    c4.write(row.get("Final Score", "0.0%"))
+
+                    rec = row.get("Recommendation", "N/A")
+                    if rec == "Shortlisted":
+                        c5.markdown("🟢 **Shortlisted**")
+                    elif rec == "Consider":
+                        c5.markdown("🟡 **Consider**")
+                    else:
+                        c5.markdown("🔴 **Rejected**")
+                    st.divider()
 
         # Download Buttons Section
         st.subheader("📥 Export Results")
