@@ -1,8 +1,7 @@
-"""Script to generate professional Source Code Documentation PDF for Resume Screening Automation System.
+"""Script to generate production-level Source Code Documentation PDF for Resume Screening Automation System.
 
-Uses ReportLab to build a structured, styled PDF document.
+Fixes font encoding issues (square box characters), URL wrapping, and refines engineering tone.
 Font sizes: Main Title (16 pt), Section Headings (14 pt), Body Text (12 pt).
-Strictly zero emojis used.
 """
 
 import os
@@ -14,12 +13,10 @@ from reportlab.platypus import (
     Spacer,
     Table,
     TableStyle,
-    PageBreak,
-    KeepTogether,
     HRFlowable
 )
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
 
 def build_pdf():
@@ -59,7 +56,7 @@ def build_pdf():
         leading=16,
         alignment=TA_CENTER,
         textColor=colors.HexColor('#475569'),
-        spaceAfter=30
+        spaceAfter=24
     )
 
     heading_style = ParagraphStyle(
@@ -112,7 +109,7 @@ def build_pdf():
         'CodeBlock',
         parent=styles['Normal'],
         fontName='Courier',
-        fontSize=10,
+        fontSize=9.5,
         leading=13,
         textColor=colors.HexColor('#0f172a'),
         backColor=colors.HexColor('#f8fafc'),
@@ -146,48 +143,48 @@ def build_pdf():
     # ---------------------------------------------------------
     # 1. TITLE PAGE / HEADER
     # ---------------------------------------------------------
-    story.append(Spacer(1, 40))
+    story.append(Spacer(1, 10))
     story.append(Paragraph("Resume Screening Automation System", title_style))
     story.append(Paragraph("Technical Source Code Documentation", subtitle_style))
-    story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#2563eb'), spaceAfter=20))
+    story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#2563eb'), spaceAfter=18))
     
     meta_data = [
-        [Paragraph("<b>Document Type:</b>", body_style), Paragraph("Source Code Implementation Architecture", body_style)],
+        [Paragraph("<b>Document Type:</b>", body_style), Paragraph("Source Code Implementation & Architecture Reference", body_style)],
         [Paragraph("<b>Developer:</b>", body_style), Paragraph("Swetha Battula", body_style)],
         [Paragraph("<b>Target Domain:</b>", body_style), Paragraph("Natural Language Processing & HR Tech Automation", body_style)],
         [Paragraph("<b>Repository:</b>", body_style), Paragraph("https://github.com/SwethaBattula/resume-screening-automation-system", body_style)],
-        [Paragraph("<b>Status:</b>", body_style), Paragraph("Production Ready / Hackathon Submission", body_style)]
+        [Paragraph("<b>Status:</b>", body_style), Paragraph("Functional Release / Hackathon Edition", body_style)]
     ]
-    t_meta = Table(meta_data, colWidths=[130, 374])
+    t_meta = Table(meta_data, colWidths=[110, 394])
     t_meta.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f8fafc')),
-        ('PADDING', (0, 0), (-1, -1), 8),
+        ('PADDING', (0, 0), (-1, -1), 7),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('LINEBELOW', (0, 0), (-1, -2), 0.5, colors.HexColor('#e2e8f0')),
         ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#cbd5e1'))
     ]))
     story.append(t_meta)
-    story.append(Spacer(1, 30))
+    story.append(Spacer(1, 20))
 
     # ---------------------------------------------------------
     # 2. PROJECT OVERVIEW
     # ---------------------------------------------------------
     story.append(Paragraph("2. Project Overview", heading_style))
-    story.append(Paragraph("<b>Purpose:</b> The Resume Screening Automation System is designed to automate the initial candidate evaluation phase by parsing multi-format PDF resumes, extracting technical skills using NLP and regex phrase boundaries, analyzing professional experience, and scoring applicants against specific Job Descriptions.", body_style))
-    story.append(Paragraph("<b>Problem Statement:</b> Traditional manual resume screening is highly labor-intensive, slow, subjective, and prone to human bias. HR teams processing hundreds of technical applicants often face bottlenecks and inconsistent evaluations.", body_style))
-    story.append(Paragraph("<b>Solution Overview:</b> This system provides an end-to-end backend processing engine and an interactive Streamlit presentation layer. It extracts resume text, preprocesses content via spaCy/NLTK, maps skills against a 240+ technical skills repository, computes a weighted score (80% Skill Match + 20% Experience Match), generates 2-3 sentence executive summaries, and exports shortlists to CSV and JSON formats.", body_style))
+    story.append(Paragraph("<b>Purpose:</b> The Resume Screening Automation System automates candidate evaluation by parsing multi-format PDF resumes, extracting technical skills using NLP and regex phrase boundaries, analyzing professional experience, and scoring applicants against target Job Descriptions.", body_style))
+    story.append(Paragraph("<b>Problem Statement:</b> Manual resume screening is labor-intensive, slow, subjective, and prone to human bias. HR teams processing high volumes of technical applicants face throughput bottlenecks and inconsistent evaluations.", body_style))
+    story.append(Paragraph("<b>Solution Overview:</b> This system combines a modular Python processing engine with an interactive Streamlit presentation layer. It extracts text, preprocesses content via spaCy/NLTK, matches technical skills against a 240+ skill repository, computes a weighted score (80% Skill Match + 20% Experience Match), generates executive candidate summaries, and exports shortlists to CSV and JSON formats.", body_style))
 
     # ---------------------------------------------------------
     # 3. OBJECTIVES
     # ---------------------------------------------------------
     story.append(Paragraph("3. Objectives", heading_style))
-    story.append(Paragraph("• Automate multi-strategy PDF text extraction with pdfplumber and PyPDF2 fallback.", bullet_style))
-    story.append(Paragraph("• Implement NLP preprocessing including lowercase conversion, tokenization, stopword filtering, and lemmatization.", bullet_style))
+    story.append(Paragraph("• Automate PDF text extraction with pdfplumber layout parsing and PyPDF2 stream fallback.", bullet_style))
+    story.append(Paragraph("• Implement NLP preprocessing including lowercasing, tokenization, stopword filtering, and lemmatization.", bullet_style))
     story.append(Paragraph("• Perform phrase-boundary technical skill matching using pre-compiled LRU-cached regex patterns.", bullet_style))
-    story.append(Paragraph("• Implement contact-proximity candidate name extraction to prevent false heading matches.", bullet_style))
+    story.append(Paragraph("• Implement contact-proximity candidate name extraction to eliminate header keyword false positives.", bullet_style))
     story.append(Paragraph("• Compute candidate scores using an extensible 80% skill + 20% experience weighted model.", bullet_style))
-    story.append(Paragraph("• Provide a zero-pandas Streamlit recruiter dashboard for candidate ranking and detailed scorecard viewing.", bullet_style))
-    story.append(Paragraph("• Generate standardized CSV and JSON screening reports for integration with downstream HR tools.", bullet_style))
+    story.append(Paragraph("• Provide a zero-pandas Streamlit recruiter dashboard for candidate ranking and profile inspection.", bullet_style))
+    story.append(Paragraph("• Export standardized CSV and JSON screening reports for downstream HR integration.", bullet_style))
 
     story.append(Spacer(1, 10))
 
@@ -195,13 +192,13 @@ def build_pdf():
     # 4. TECHNOLOGY STACK
     # ---------------------------------------------------------
     story.append(Paragraph("4. Technology Stack", heading_style))
-    story.append(Paragraph("The system is constructed using modern Python backend tools and specialized NLP libraries.", body_style))
+    story.append(Paragraph("The system is built using modern Python libraries and specialized NLP toolkits.", body_style))
 
     tech_data = [
         [Paragraph("Technology", table_header), Paragraph("Role & Category", table_header), Paragraph("Description", table_header)],
         [Paragraph("Python 3.11", table_text), Paragraph("Core Language", table_text), Paragraph("Primary backend implementation language.", table_text)],
-        [Paragraph("Streamlit", table_text), Paragraph("Frontend Dashboard", table_text), Paragraph("Interactive recruiter dashboard and presentation layer.", table_text)],
-        [Paragraph("spaCy (en_core_web_sm)", table_text), Paragraph("NLP Engine", table_text), Paragraph("Entity recognition, tokenization, and lemmatization.", table_text)],
+        [Paragraph("Streamlit", table_text), Paragraph("Frontend Dashboard", table_text), Paragraph("Interactive recruiter dashboard presentation layer.", table_text)],
+        [Paragraph("spaCy (en_core_web_sm)", table_text), Paragraph("NLP Engine", table_text), Paragraph("Tokenization, entity recognition, and lemmatization.", table_text)],
         [Paragraph("NLTK", table_text), Paragraph("NLP Utilities", table_text), Paragraph("Fallback stopword processing and text normalization.", table_text)],
         [Paragraph("pdfplumber", table_text), Paragraph("PDF Extraction", table_text), Paragraph("Layout-aware PDF text extraction engine.", table_text)],
         [Paragraph("PyPDF2 / pypdf", table_text), Paragraph("PDF Fallback", table_text), Paragraph("Secondary PDF parser for unreadable streams.", table_text)],
@@ -217,14 +214,14 @@ def build_pdf():
     ]))
     story.append(t_tech)
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 5. PROJECT ARCHITECTURE
     # ---------------------------------------------------------
     story.append(Paragraph("5. Project Architecture", heading_style))
     story.append(Paragraph("The application follows a clean layered architecture separating presentation, orchestration, domain processing, and data access layers:", body_style))
-    story.append(Paragraph("• <b>Presentation Layer (app.py):</b> Streamlit web dashboard built strictly with native layout components (st.columns, st.container, st.markdown, st.write, st.progress) without pandas dependencies.", bullet_style))
+    story.append(Paragraph("• <b>Presentation Layer (app.py):</b> Streamlit web dashboard built strictly with native layout components (st.columns, st.container, st.markdown, st.write, st.progress) avoiding pandas dependencies.", bullet_style))
     story.append(Paragraph("• <b>Orchestration Layer (utils/resume_pipeline.py):</b> Exposes batch process APIs (process_resume, process_resume_batch) coordinating all backend steps.", bullet_style))
     story.append(Paragraph("• <b>Text Extraction Layer (utils/extractor.py):</b> Multi-strategy PDF extractor using pdfplumber with PyPDF2 fallback.", bullet_style))
     story.append(Paragraph("• <b>NLP & Parsing Layer (utils/preprocess.py, utils/parser.py):</b> spaCy/NLTK pipeline, contact-proximity name extraction, email/phone regex, and date-range experience parsing.", bullet_style))
@@ -232,38 +229,40 @@ def build_pdf():
     story.append(Paragraph("• <b>Scoring & Summary Engine (utils/scorer.py):</b> Extensible 80/20 scoring model, recommendation classifier, and 2-3 sentence executive candidate summary generator.", bullet_style))
     story.append(Paragraph("• <b>Export Layer (utils/exporter.py):</b> Formatter generating flat records, CSV strings, and JSON reports.", bullet_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 6. PROJECT FOLDER STRUCTURE
     # ---------------------------------------------------------
     story.append(Paragraph("6. Project Folder Structure", heading_style))
+    
+    # Use clean ASCII characters to prevent ReportLab font encoding boxes (■■■)
     tree_text = """ResumeScreeningAutomation/
-├── app.py                      # Streamlit Presentation Layer
-├── main.py                     # CLI Entry Point & Batch Execution Demo
-├── config.py                   # Centralized Configuration & Scoring Weights
-├── utils/                      # Backend Modular Engine
-│   ├── __init__.py             # Package Initialization
-│   ├── extractor.py            # PDF Text Extraction (pdfplumber + PyPDF2 fallback)
-│   ├── preprocess.py           # spaCy / NLTK Text Preprocessing Engine
-│   ├── parser.py               # Resume Contact, Education, & Experience Parser
-│   ├── skills.py               # LRU-cached Technical Skill Matcher
-│   ├── scorer.py               # Weighted Match Scorer & Summary Generator
-│   ├── resume_pipeline.py      # Master Pipeline Orchestrator
-│   ├── exporter.py            # CSV / JSON Exporter & Record Formatter
-│   └── logger.py              # Centralized Logging System
-├── data/                       # Datasets & Benchmark Job Description
-│   ├── skills.txt              # Categorized Skills Database (240+ skills)
-│   └── sample_job_description.txt # Benchmark Job Description
-├── tests/                      # Automated Test Suite
-│   └── test_backend.py         # 18 Edge-Case Unit Tests
-├── output/                     # Exported Screening Results Directory
-├── requirements.txt            # Package Dependencies Specification
-└── README.md                   # Repository Overview & User Guide"""
+|-- app.py                      # Streamlit Presentation Layer
+|-- main.py                     # CLI Entry Point & Batch Execution Demo
+|-- config.py                   # Centralized Configuration & Scoring Weights
+|-- utils/                      # Backend Modular Engine
+|   |-- __init__.py             # Package Initialization
+|   |-- extractor.py            # PDF Text Extraction (pdfplumber + PyPDF2 fallback)
+|   |-- preprocess.py           # spaCy / NLTK Text Preprocessing Engine
+|   |-- parser.py               # Resume Contact, Education, & Experience Parser
+|   |-- skills.py               # LRU-cached Technical Skill Matcher
+|   |-- scorer.py               # Weighted Match Scorer & Summary Generator
+|   |-- resume_pipeline.py      # Master Pipeline Orchestrator
+|   |-- exporter.py            # CSV / JSON Exporter & Record Formatter
+|   `-- logger.py              # Centralized Logging System
+|-- data/                       # Datasets & Benchmark Job Description
+|   |-- skills.txt              # Categorized Skills Database (240+ skills)
+|   `-- sample_job_description.txt # Benchmark Job Description
+|-- tests/                      # Automated Test Suite
+|   `-- test_backend.py         # 18 Edge-Case Unit Tests
+|-- output/                     # Exported Screening Results Directory
+|-- requirements.txt            # Package Dependencies Specification
+`-- README.md                   # Repository Overview & User Guide"""
 
     story.append(Paragraph(tree_text.replace("\n", "<br/>").replace(" ", "&nbsp;"), code_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 7. MODULE DESCRIPTION
@@ -272,7 +271,7 @@ def build_pdf():
     
     modules = [
         ("app.py", "Streamlit presentation layer. Renders recruiter ranking cards, match progress bars, initials avatars, detailed profile tabs, and CSV/JSON download buttons without importing pandas."),
-        ("main.py", "CLI driver script. Loads configuration, executes batch resume processing against the benchmark Job Description, prints formatted rankings, and exports reports."),
+        ("main.py", "CLI driver script. Loads configuration, executes batch resume processing against benchmark Job Description, prints formatted rankings, and exports reports."),
         ("config.py", "Centralized configuration module. Stores scoring weights (SKILL_WEIGHT=0.80, EXP_WEIGHT=0.20), thresholds (80% Shortlisted, 60% Consider), paths, and logging formats."),
         ("utils/extractor.py", "Handles PDF text extraction. Tries pdfplumber first to preserve visual layouts, falling back to PyPDF2 if stream objects are corrupted."),
         ("utils/preprocess.py", "NLP preprocessing pipeline. Performs lowercasing, punctuation removal, stopword filtering, tokenization, and spaCy/NLTK lemmatization."),
@@ -286,7 +285,7 @@ def build_pdf():
     for mod_name, mod_desc in modules:
         story.append(Paragraph(f"<b>{mod_name}:</b> {mod_desc}", body_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 8. RESUME SCREENING WORKFLOW
@@ -312,7 +311,7 @@ def build_pdf():
     for step in workflow_steps:
         story.append(Paragraph(step, bullet_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 9. CANDIDATE SCORING ALGORITHM
@@ -327,7 +326,7 @@ def build_pdf():
     story.append(Paragraph("&nbsp;&nbsp;- <b>Consider:</b> 60.0% &le; Final Score &lt; 80.0%", bullet_style))
     story.append(Paragraph("&nbsp;&nbsp;- <b>Rejected:</b> Final Score &lt; 60.0%", bullet_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 10. FRONTEND FEATURES
@@ -341,7 +340,7 @@ def build_pdf():
     story.append(Paragraph("• <b>Detailed Candidate Profile Tab:</b> Candidate selector dropdown displaying Executive Summary, Education, Matched Skills, Missing Required Skills, Scorecard metrics, and contact metadata.", bullet_style))
     story.append(Paragraph("• <b>Export Section:</b> Download buttons for CSV and JSON reports.", bullet_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 11. ERROR HANDLING
@@ -353,7 +352,7 @@ def build_pdf():
     story.append(Paragraph("• <b>Missing Job Description:</b> Checked by frontend and backend; default target experience (2.0 yrs) is used if required experience is unparsed.", bullet_style))
     story.append(Paragraph("• <b>Missing Candidate Details:</b> Name fallback hierarchy defaults to 'Unknown Candidate', missing emails/phones default to 'N/A'.", bullet_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 12. TESTING & VALIDATION
@@ -364,7 +363,7 @@ def build_pdf():
     story.append(Paragraph("• <b>CLI Execution Verification:</b> Executed via <i>python main.py</i> to verify batch execution against benchmark resumes.", bullet_style))
     story.append(Paragraph("• <b>Frontend Verification:</b> Verified via <i>python -m streamlit run app.py</i> ensuring zero pandas dependencies and clean UI rendering.", bullet_style))
 
-    story.append(Spacer(1, 20))
+    story.append(Spacer(1, 15))
 
     # ---------------------------------------------------------
     # 13. SCREENSHOTS SECTION (PLACEHOLDERS)
@@ -381,9 +380,9 @@ def build_pdf():
     for sc_title in screenshots:
         story.append(Paragraph(sc_title, subheading_style))
         story.append(Paragraph("[ Place screenshot image here ]", ParagraphStyle('BoxText', parent=body_style, textColor=colors.HexColor('#94a3b8'), alignment=TA_CENTER)))
-        story.append(Spacer(1, 60))  # Blank space for manual insertion
+        story.append(Spacer(1, 45))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 14. FUTURE ENHANCEMENTS
@@ -395,7 +394,7 @@ def build_pdf():
     story.append(Paragraph("• <b>ATS Integration:</b> Build REST APIs connecting with ATS platforms like Workday and Greenhouse.", bullet_style))
     story.append(Paragraph("• <b>Cloud Deployment:</b> Containerize application via Docker for AWS Elastic Container Service / Streamlit Cloud deployment.", bullet_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 15. GITHUB REPOSITORY
@@ -405,13 +404,13 @@ def build_pdf():
     story.append(Paragraph("<b>Repository Link:</b> https://github.com/SwethaBattula/resume-screening-automation-system", body_style))
     story.append(Paragraph("<b>Default Branch:</b> main", body_style))
 
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 12))
 
     # ---------------------------------------------------------
     # 16. CONCLUSION
     # ---------------------------------------------------------
     story.append(Paragraph("16. Conclusion", heading_style))
-    story.append(Paragraph("The Resume Screening Automation System delivers a production-ready, modular, and highly efficient solution for technical resume screening. By combining multi-strategy PDF text extraction, spaCy/NLTK NLP preprocessing, phrase-boundary skill matching, weighted candidate scoring, and a clean Streamlit presentation layer, the application significantly reduces initial recruitment overhead while maintaining objective, reproducible candidate rankings.", body_style))
+    story.append(Paragraph("The Resume Screening Automation System delivers a modular, reproducible, and scalable solution for technical resume screening. By combining multi-strategy PDF text extraction, spaCy/NLTK NLP preprocessing, phrase-boundary skill matching, weighted candidate scoring, and a clean Streamlit presentation layer, the application significantly reduces initial recruitment overhead while maintaining objective candidate rankings.", body_style))
 
     # Build PDF Document
     doc.build(story)
