@@ -1,0 +1,17 @@
+Job Title: Senior Python & Data Science Engineer
+Department: Artificial Intelligence & Engineering
+
+Job Description:
+We are seeking an experienced Senior Python Backend Engineer with strong expertise in Data Science and Machine Learning. The ideal candidate will have 3+ years of professional experience building scalable backend APIs, processing data pipelines, and integrating ML models into production systems.
+
+Required Technical Skills:
+- Python, FastAPI, Django, Flask
+- SQL, PostgreSQL, MongoDB, Redis
+- Machine Learning, Data Science, Natural Language Processing, PyTorch, Scikit-Learn, Pandas, NumPy
+- Docker, Kubernetes, AWS, Git, CI/CD, Microservices
+- System Architecture, REST API, Unit Testing
+
+Qualifications:
+- Bachelor's or Master's degree in Computer Science, Data Science, or related technical field.
+- Minimum 3 years of software engineering experience.
+- Strong knowledge of data structures, algorithms, and modular python design.

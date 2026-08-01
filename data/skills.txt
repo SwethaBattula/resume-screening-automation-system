@@ -1,0 +1,269 @@
+# Categorized Technical Skills Dataset for Resume Screening Automation System
+
+# Programming Languages
+python
+java
+c++
+c#
+javascript
+typescript
+go
+golang
+rust
+ruby
+php
+swift
+kotlin
+scala
+perl
+r
+matlab
+dart
+shell
+bash
+powershell
+assembly
+haskell
+elixir
+lua
+
+# Web Development Frameworks & Libraries
+react
+react.js
+reactjs
+angular
+angularjs
+vue
+vue.js
+vuejs
+next.js
+nextjs
+nuxt.js
+express
+express.js
+node.js
+nodejs
+django
+flask
+fastapi
+spring
+spring boot
+asp.net
+asp.net core
+laravel
+symfony
+ruby on rails
+rails
+svelte
+ember.js
+bootstrap
+tailwind
+tailwind css
+jquery
+graphql
+rest api
+restful apis
+websockets
+microservices
+
+# Data Science, Machine Learning & AI
+machine learning
+deep learning
+artificial intelligence
+data science
+natural language processing
+nlp
+computer vision
+data analysis
+data visualization
+tensorflow
+keras
+pytorch
+scikit-learn
+sklearn
+pandas
+numpy
+scipy
+opencv
+spacy
+nltk
+huggingface
+transformers
+langchain
+llama-index
+xgboost
+lightgbm
+statmodels
+matplotlib
+seaborn
+plotly
+tensorboard
+bert
+gpt
+llm
+genai
+generative ai
+predictive modeling
+time series analysis
+reinforcement learning
+feature engineering
+
+# Cloud Platforms & DevOps
+aws
+amazon web services
+azure
+microsoft azure
+gcp
+google cloud platform
+docker
+kubernetes
+k8s
+terraform
+ansible
+puppet
+chef
+jenkins
+gitlab ci
+github actions
+circleci
+helm
+prometheus
+grafana
+argocd
+cloudformation
+serverless
+lambda
+ecs
+eks
+aks
+gke
+openstack
+vagrant
+nginx
+apache
+ci/cd
+
+# Databases & Data Stores
+sql
+nosql
+postgresql
+postgres
+mysql
+sqlite
+oracle
+sql server
+mssql
+mongodb
+redis
+cassandra
+elasticsearch
+dynamodb
+neo4j
+couchdb
+couchbase
+mariadb
+snowflake
+bigquery
+redshift
+clickhouse
+vectordb
+faiss
+chromadb
+pinecone
+qdrant
+milvus
+
+# Data Engineering & Big Data
+apache spark
+spark
+pyspark
+hadoop
+apache kafka
+kafka
+airflow
+apache airflow
+snowflake
+dbt
+etl
+data warehousing
+data pipelines
+data modeling
+flink
+beam
+hive
+presto
+trino
+
+# Mobile Development
+ios
+android
+flutter
+react native
+xamarin
+ionic
+swiftui
+jetpack compose
+mobile development
+
+# Software Engineering & Methodology
+git
+github
+gitlab
+bitbucket
+jira
+confluence
+agile
+scrum
+kanban
+test driven development
+tdd
+bdd
+unit testing
+integration testing
+pytest
+unittest
+jest
+cypress
+selenium
+playwright
+design patterns
+object-oriented programming
+oop
+functional programming
+code review
+system architecture
+system design
+
+# Cybersecurity & Networking
+cybersecurity
+ethical hacking
+penetration testing
+network security
+siem
+wireshark
+metasploit
+owasp
+cryptography
+iam
+active directory
+vpn
+firewalls
+soc
+incident response
+
+# Operating Systems & Tools
+linux
+ubuntu
+debian
+centos
+redhat
+windows server
+macos
+bash scripting
+vim
+vscode
+docker compose
+make
+cmake
+postman
+insomnia
