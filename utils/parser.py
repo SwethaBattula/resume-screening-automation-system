@@ -30,9 +30,23 @@ DEGREE_KEYWORDS = [
 ]
 
 NON_NAME_WORDS = {
+    # Document section headers & meta words
     "resume", "curriculum", "vitae", "cv", "contact", "email", "phone", "profile",
     "summary", "objective", "experience", "education", "skills", "projects", "work",
-    "personal", "details", "page", "github", "linkedin", "address", "city", "state"
+    "personal", "details", "page", "github", "linkedin", "address", "city", "state",
+    "location", "portfolio", "tel", "mobile", "cell", "telephone",
+    # Tech skills & keywords
+    "java", "python", "javascript", "typescript", "c++", "c#", "html", "css", "sql", "aws",
+    "docker", "kubernetes", "react", "angular", "vue", "node", "django", "flask", "fastapi",
+    "pytorch", "tensorflow", "scikit-learn", "pandas", "numpy", "mongodb", "postgresql",
+    "mysql", "oracle", "redis", "git", "gitlab", "jira", "ci/cd", "linux", "unix",
+    "azure", "gcp", "devops", "cloud", "api", "rest", "graphql", "microservices", "data",
+    "science", "machine", "learning", "ai", "nlp", "deep", "framework", "library", "database",
+    # Common job titles & roles
+    "developer", "engineer", "intern", "architect", "analyst", "administrator", "consultant",
+    "manager", "lead", "senior", "junior", "principal", "staff", "associate", "specialist",
+    "fullstack", "full-stack", "frontend", "backend", "software", "web", "system", "systems",
+    "network", "security", "qa", "test", "tester"
 }
 
 
@@ -93,13 +107,14 @@ def extract_education(text: str) -> List[str]:
 
 
 def extract_name(text: str, filename: Optional[str] = None) -> str:
-    """Extracts candidate name using a 4-level fallback hierarchy.
+    """Extracts candidate name using an improved 5-level fallback hierarchy.
 
     Hierarchy:
-    1. spaCy Named Entity Recognition (PERSON entity)
-    2. First 5 non-empty lines heuristic (capitalized line, excluding noise words)
-    3. Cleaned filename (e.g., 'john_doe_resume.pdf' -> 'John Doe')
-    4. Fallback string: 'Unknown Candidate'
+    1. Proximity to contact info (email/phone): inspect lines near email/phone for a valid name.
+    2. spaCy Named Entity Recognition (PERSON entity) on non-noise header text.
+    3. First 8 non-empty lines heuristic (capitalized line, excluding noise words, tech keywords, & titles).
+    4. Cleaned filename (e.g., 'sofia_brown_resume.pdf' -> 'Sofia Brown').
+    5. Fallback string: 'Unknown Candidate'.
 
     Args:
         text (str): Raw resume text.
@@ -108,43 +123,75 @@ def extract_name(text: str, filename: Optional[str] = None) -> str:
     Returns:
         str: Extracted candidate name.
     """
+    lines = [line.strip() for line in text.splitlines() if line.strip()] if text else []
+
+    # Level 1: Proximity to Contact Information (Email / Phone)
+    if lines:
+        contact_line_indices = []
+        for idx, line in enumerate(lines[:10]):
+            if EMAIL_REGEX.search(line) or PHONE_REGEX.search(line):
+                contact_line_indices.append(idx)
+
+        candidate_indices = []
+        for c_idx in contact_line_indices:
+            for offset in [-1, -2, 1, 2, 0]:
+                t_idx = c_idx + offset
+                if 0 <= t_idx < min(len(lines), 10) and t_idx not in candidate_indices:
+                    candidate_indices.append(t_idx)
+
+        for idx in candidate_indices:
+            line = lines[idx]
+            clean_line = EMAIL_REGEX.sub("", line)
+            clean_line = PHONE_REGEX.sub("", clean_line).strip()
+            clean_line = re.sub(r"[\(\)\|\:\,\-\•]", " ", clean_line).strip()
+            words = clean_line.split()
+
+            if 1 <= len(words) <= 4:
+                lower_words = [w.lower() for w in words]
+                if not any(w in NON_NAME_WORDS for w in lower_words):
+                    if all(len(w) >= 2 and all(c.isalpha() or c in ".-'" for c in w) for w in words):
+                        return " ".join(words).title()
+
+    # Level 2: spaCy NER
     if text:
-        # Level 1: spaCy NER
         nlp = _get_spacy_nlp()
         if nlp is not None:
             try:
-                # Inspect top 1000 characters for performance
                 doc = nlp(text[:1000])
                 for ent in doc.ents:
                     if ent.label_ == "PERSON":
                         name_candidate = ent.text.strip()
                         clean_tokens = [w for w in name_candidate.split() if w.lower() not in NON_NAME_WORDS]
-                        if 1 <= len(clean_tokens) <= 4 and not EMAIL_REGEX.search(name_candidate):
-                            return " ".join(clean_tokens).title()
+                        if 1 <= len(clean_tokens) <= 4 and not EMAIL_REGEX.search(name_candidate) and not PHONE_REGEX.search(name_candidate):
+                            if all(len(w) >= 2 and all(c.isalpha() or c in ".-'" for c in w) for w in clean_tokens):
+                                return " ".join(clean_tokens).title()
             except Exception as exc:
                 logger.warning(f"spaCy NER name extraction failed: {exc}")
 
-        # Level 2: Top 5 non-empty lines heuristic
-        lines = [line.strip() for line in text.splitlines() if line.strip()]
-        for line in lines[:5]:
-            # Skip if contains email, phone, or noise words
-            if EMAIL_REGEX.search(line) or PHONE_REGEX.search(line):
-                continue
-            words = line.split()
-            if 1 <= len(words) <= 4:
-                lower_words = [w.lower() for w in words]
-                if not any(w in NON_NAME_WORDS for w in lower_words) and all(c.isalpha() or c in ".-" for w in "".join(words)):
-                    return line.title()
+    # Level 3: Top Lines Heuristic
+    for line in lines[:8]:
+        clean_line = EMAIL_REGEX.sub("", line)
+        clean_line = PHONE_REGEX.sub("", clean_line).strip()
+        clean_line = re.sub(r"[\(\)\|\:\,\-\•]", " ", clean_line).strip()
+        words = clean_line.split()
+        if 1 <= len(words) <= 4:
+            lower_words = [w.lower() for w in words]
+            if not any(w in NON_NAME_WORDS for w in lower_words):
+                if all(len(w) >= 2 and all(c.isalpha() or c in ".-'" for c in w) for w in words):
+                    return " ".join(words).title()
 
-    # Level 3: Filename Cleanup
+    # Level 4: Filename Cleanup
     if filename:
         stem = Path(filename).stem
         cleaned_stem = re.sub(r"(?i)(resume|cv|curriculum|vitae|_|-|\d+)", " ", stem).strip()
         words = cleaned_stem.split()
         if words:
-            return " ".join(words).title()
+            lower_words = [w.lower() for w in words]
+            clean_words = [w for w, lw in zip(words, lower_words) if lw not in ("resume", "cv", "curriculum", "vitae")]
+            if clean_words:
+                return " ".join(clean_words).title()
 
-    # Level 4: Fallback
+    # Level 5: Fallback
     return "Unknown Candidate"
 
 
