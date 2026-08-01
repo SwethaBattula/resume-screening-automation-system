@@ -1,7 +1,8 @@
 """Streamlit Frontend Application for Resume Screening Automation System.
 
-Provides a clean presentation layer built entirely with native Streamlit layout components
-(st.columns, st.container, st.markdown, st.write) without any dependency on pandas or pyarrow.
+Provides a modern dashboard presentation layer built with native Streamlit components
+(st.columns, st.container, st.markdown, st.write) and custom CSS styling.
+Does not import pandas directly or indirectly.
 """
 
 import tempfile
@@ -25,9 +26,154 @@ import config
 # Page Configuration
 st.set_page_config(
     page_title="Resume Screening Automation System",
-    page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded",
+)
+
+
+# Inject Custom CSS for Modern Dark Dashboard Appearance
+st.markdown(
+    """
+    <style>
+    /* Main Layout Adjustments */
+    .block-container {
+        padding-top: 1.5rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Hero Header Banner */
+    .hero-banner {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid #334155;
+        margin-bottom: 24px;
+    }
+    .hero-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin: 0;
+    }
+    .hero-subtitle {
+        font-size: 1.05rem;
+        color: #94a3b8;
+        margin-top: 8px;
+        margin-bottom: 16px;
+    }
+    .tech-tag {
+        background-color: #334155;
+        color: #e2e8f0;
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        font-weight: 500;
+    }
+
+    /* Dashboard Cards */
+    .card-total {
+        background-color: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+    }
+    .card-shortlisted {
+        background-color: rgba(34, 197, 94, 0.1);
+        border: 1px solid #22c55e;
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+    }
+    .card-consider {
+        background-color: rgba(245, 158, 11, 0.1);
+        border: 1px solid #f59e0b;
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+    }
+    .card-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid #ef4444;
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+    }
+    .card-label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+    }
+    .card-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin-top: 4px;
+    }
+
+    /* Status Badges */
+    .badge {
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-block;
+    }
+    .badge-shortlisted {
+        background-color: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+        border: 1px solid #22c55e;
+    }
+    .badge-consider {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border: 1px solid #f59e0b;
+    }
+    .badge-rejected {
+        background-color: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid #ef4444;
+    }
+
+    /* Skill Tags */
+    .skill-tag-matched {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+        border: 1px solid #3b82f6;
+        font-size: 0.8rem;
+        padding: 3px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin: 3px;
+        font-weight: 500;
+    }
+    .skill-tag-missing {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        font-size: 0.8rem;
+        padding: 3px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin: 3px;
+    }
+
+    /* Footer */
+    .app-footer {
+        margin-top: 48px;
+        padding-top: 20px;
+        border-top: 1px solid #334155;
+        text-align: center;
+        color: #64748b;
+        font-size: 0.85rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 
@@ -39,15 +185,34 @@ def get_cached_skills_db():
 
 def main():
     """Main Streamlit Frontend Application Execution."""
-    st.title("📄 Resume Screening Automation System")
-    st.caption("AI-Powered Resume Parsing, NLP Skill Matching & Candidate Ranking System")
+    
+    # 1. Professional Hero Section
+    st.markdown(
+        """
+        <div class="hero-banner">
+            <div class="hero-title">Resume Screening Automation System</div>
+            <div class="hero-subtitle">
+                An AI-powered system for automated resume parsing, NLP technical skill extraction, weighted candidate scoring, and candidate ranking.
+            </div>
+            <div>
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">Streamlit</span>
+                <span class="tech-tag">spaCy</span>
+                <span class="tech-tag">NLTK</span>
+                <span class="tech-tag">PDF Processing</span>
+                <span class="tech-tag">Scikit-learn</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # Load Skills DB
     skills_db = get_cached_skills_db()
 
-    # Sidebar Controls
-    st.sidebar.header("📋 Screening Setup")
-    st.sidebar.markdown("Upload a Job Description and candidate PDF resumes to start screening.")
+    # 4. Improved Sidebar Controls
+    st.sidebar.markdown("### Screening Setup")
+    st.sidebar.markdown("Upload a Job Description and PDF resumes to execute automated candidate screening.")
 
     # 1. Job Description Uploader
     uploaded_jd_file = st.sidebar.file_uploader(
@@ -64,19 +229,29 @@ def main():
         help="Select one or multiple candidate PDF resume files."
     )
 
-    # Sidebar Info Box
+    # Compact Sidebar Info Cards
     st.sidebar.divider()
-    st.sidebar.markdown("### ⚙️ Scoring Architecture")
-    st.sidebar.info(
-        "• **Skill Match (80%)**: Exact & phrase-boundary technical skill overlap.\n"
-        "• **Experience Match (20%)**: Candidate experience vs target JD experience.\n"
-        "• **Shortlisted**: Score ≥ 80%\n"
-        "• **Consider**: 60% ≤ Score < 80%\n"
-        "• **Rejected**: Score < 60%"
+    st.sidebar.markdown("### Screening Criteria")
+    st.sidebar.markdown(
+        """
+        <div style="background-color: #1e293b; padding: 12px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;">Weighted Scoring Model</div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">• Technical Skill Match: <b>80%</b></div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">• Experience Match: <b>20%</b></div>
+        </div>
+        <div style="background-color: #1e293b; padding: 12px; border-radius: 8px; border: 1px solid #334155;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;">Threshold Boundaries</div>
+            <div style="font-size: 0.8rem; color: #4ade80; margin-top: 4px;">• Shortlisted: Score ≥ 80%</div>
+            <div style="font-size: 0.8rem; color: #fbbf24;">• Consider: 60% ≤ Score < 80%</div>
+            <div style="font-size: 0.8rem; color: #f87171;">• Rejected: Score < 60%</div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
+    st.sidebar.markdown("<br>", unsafe_allow_html=True)
     # Start Screening Button
-    start_screening = st.sidebar.button("🚀 Start Screening", type="primary", use_container_width=True)
+    start_screening = st.sidebar.button("Start Screening", type="primary", use_container_width=True)
 
     # Store state for persistent results across re-renders
     if "results" not in st.session_state:
@@ -84,14 +259,12 @@ def main():
 
     # Trigger Processing Workflow
     if start_screening:
-        # Error Check 1: Missing Job Description
         if not uploaded_jd_file:
-            st.error("⚠️ Missing Job Description! Please upload a valid .txt Job Description file in the sidebar.")
+            st.error("Missing Job Description! Please upload a valid .txt Job Description file in the sidebar.")
             return
 
-        # Error Check 2: No Resumes Uploaded
         if not uploaded_resume_files:
-            st.error("⚠️ No Resumes Uploaded! Please upload at least one PDF resume file to screen.")
+            st.error("No Resumes Uploaded! Please upload at least one PDF resume file to screen.")
             return
 
         # Process uploaded files in a temporary directory
@@ -127,52 +300,99 @@ def main():
                         pdf_paths=pdf_paths,
                         job_description=jd_temp_file,
                         skills_db=skills_db,
-                        export=False  # Handled in Streamlit session state
+                        export=False
                     )
                     progress_bar.progress(100, text="Screening completed successfully!")
                     st.session_state["results"] = results
-                    st.success(f"🎉 Successfully screened {len(results)} candidate resume(s)!")
+                    st.success(f"Successfully screened {len(results)} candidate resume(s)!")
                 except Exception as exc:
-                    st.error(f"❌ An error occurred during screening pipeline execution: {str(exc)}")
+                    st.error(f"An error occurred during screening pipeline execution: {str(exc)}")
                     return
 
     # Display Results if available
     results = st.session_state["results"]
 
     if not results:
-        st.info("👈 Please upload a Job Description and PDF Resumes in the sidebar, then click **Start Screening**.")
+        st.info("Please upload a Job Description and PDF Resumes in the sidebar, then click 'Start Screening'.")
+        # Render Footer
+        st.markdown(
+            """
+            <div class="app-footer">
+                <b>Resume Screening Automation System</b><br>
+                Built with Python, Streamlit, spaCy, and NLP<br>
+                Developed by <b>Swetha Battula</b>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         return
 
-    # Check for extraction warnings (empty / corrupted files)
+    # Check for extraction warnings
     warnings = [r for r in results if r.get("extraction_status") in ("Empty File", "Empty Text") or "Error" in r.get("extraction_status", "")]
     if warnings:
         for w in warnings:
-            st.warning(f"⚠️ Warning for file **{w['resume_filename']}**: Status = '{w['extraction_status']}'. Minimal or no text extracted.")
+            st.warning(f"Warning for file '{w['resume_filename']}': Status = '{w['extraction_status']}'. Minimal or no text extracted.")
 
     st.divider()
 
-    # Executive Overview Metrics (Calculated by Backend)
+    # 3. Modern Dashboard Metric Cards
     metrics = get_screening_summary_metrics(results)
 
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Total Candidates", metrics["total"])
-    m2.metric("Shortlisted (≥80%)", metrics["shortlisted"], delta_color="normal")
-    m3.metric("Consider (60-79%)", metrics["consider"], delta_color="off")
-    m4.metric("Rejected (<60%)", metrics["rejected"], delta_color="inverse")
+    with m1:
+        st.markdown(
+            f"""
+            <div class="card-total">
+                <div class="card-label">Total Candidates</div>
+                <div class="card-value">{metrics['total']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with m2:
+        st.markdown(
+            f"""
+            <div class="card-shortlisted">
+                <div class="card-label" style="color: #4ade80;">Shortlisted (≥80%)</div>
+                <div class="card-value" style="color: #4ade80;">{metrics['shortlisted']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with m3:
+        st.markdown(
+            f"""
+            <div class="card-consider">
+                <div class="card-label" style="color: #fbbf24;">Consider (60-79%)</div>
+                <div class="card-value" style="color: #fbbf24;">{metrics['consider']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with m4:
+        st.markdown(
+            f"""
+            <div class="card-rejected">
+                <div class="card-label" style="color: #f87171;">Rejected (<60%)</div>
+                <div class="card-value" style="color: #f87171;">{metrics['rejected']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     st.divider()
 
     # Main Tab Layout: Results Table & Candidate Detail View
-    tab_table, tab_details = st.tabs(["📊 Candidate Rankings Table", "🔍 Detailed Candidate Card"])
+    tab_table, tab_details = st.tabs(["Candidate Rankings Table", "Detailed Candidate Card"])
 
-    # TAB 1: Candidates Table (Custom table built with st.columns & st.container without pandas)
+    # 5. Improved Candidate Screening Results Table
     with tab_table:
         st.subheader("Candidate Screening Results")
 
         table_records = format_candidate_table_records(results)
 
         if table_records:
-            # Custom Table Header
+            # Custom Header Row
             h1, h2, h3, h4, h5 = st.columns([2.5, 1.2, 3.5, 1.2, 1.5])
             h1.markdown("**Candidate Name**")
             h2.markdown("**Experience**")
@@ -181,7 +401,7 @@ def main():
             h5.markdown("**Recommendation**")
             st.divider()
 
-            # Custom Table Rows
+            # Custom Data Rows
             for row in table_records:
                 with st.container():
                     c1, c2, c3, c4, c5 = st.columns([2.5, 1.2, 3.5, 1.2, 1.5])
@@ -192,40 +412,36 @@ def main():
 
                     rec = row.get("Recommendation", "N/A")
                     if rec == "Shortlisted":
-                        c5.markdown("🟢 **Shortlisted**")
+                        c5.markdown('<span class="badge badge-shortlisted">Shortlisted</span>', unsafe_allow_html=True)
                     elif rec == "Consider":
-                        c5.markdown("🟡 **Consider**")
+                        c5.markdown('<span class="badge badge-consider">Consider</span>', unsafe_allow_html=True)
                     else:
-                        c5.markdown("🔴 **Rejected**")
+                        c5.markdown('<span class="badge badge-rejected">Rejected</span>', unsafe_allow_html=True)
                     st.divider()
 
         # Download Buttons Section
-        st.subheader("📥 Export Results")
+        st.subheader("Export Results")
         d1, d2 = st.columns(2)
 
-        # Prepare CSV Data
         csv_data = generate_csv_string(results)
-
         d1.download_button(
-            label="📄 Download CSV Report",
+            label="Download CSV Report",
             data=csv_data,
             file_name="shortlisted_candidates.csv",
             mime="text/csv",
             use_container_width=True
         )
 
-        # Prepare JSON Data
         json_data = generate_json_string(results)
-
         d2.download_button(
-            label="📦 Download JSON Report",
+            label="Download JSON Report",
             data=json_data,
             file_name="shortlisted_candidates.json",
             mime="application/json",
             use_container_width=True
         )
 
-    # TAB 2: Candidate Detail Card
+    # 6. Improved Detailed Candidate Profile Page
     with tab_details:
         st.subheader("Detailed Candidate Profile")
 
@@ -241,51 +457,63 @@ def main():
             st.markdown(f"### **{cand['candidate_name']}**")
             st.info(f"**Executive Summary:**\n\n{cand['summary']}")
 
-            st.markdown("#### **Education**")
+            st.markdown("#### Education")
             if cand["education"]:
                 for edu in cand["education"]:
                     st.markdown(f"• {edu}")
             else:
                 st.caption("No specific degree keywords detected.")
 
-            st.markdown("#### **Skills Overview**")
+            st.markdown("#### Skills Overview")
             s_col1, s_col2 = st.columns(2)
             with s_col1:
                 st.markdown("**Matched Skills (JD Overlap):**")
                 if cand["matched_skills"]:
-                    for s in cand["matched_skills"]:
-                        st.markdown(f"✅ `{s}`")
+                    tags_html = "".join([f'<span class="skill-tag-matched">{s}</span>' for s in cand["matched_skills"]])
+                    st.markdown(tags_html, unsafe_allow_html=True)
                 else:
                     st.caption("No matching JD skills found.")
             with s_col2:
                 st.markdown("**Missing Required Skills:**")
                 if cand["missing_skills"]:
-                    for s in cand["missing_skills"]:
-                        st.markdown(f"❌ `{s}`")
+                    tags_html = "".join([f'<span class="skill-tag-missing">{s}</span>' for s in cand["missing_skills"]])
+                    st.markdown(tags_html, unsafe_allow_html=True)
                 else:
                     st.caption("No missing skills!")
 
         with col_right:
-            st.markdown("#### **Screening Scorecard**")
+            st.markdown("#### Screening Scorecard")
 
             rec = cand["recommendation"]
             if rec == "Shortlisted":
-                st.success(f"### Status: {rec}")
+                st.markdown('<div class="badge badge-shortlisted" style="font-size: 1.1rem; margin-bottom: 16px;">Status: Shortlisted</div>', unsafe_allow_html=True)
             elif rec == "Consider":
-                st.warning(f"### Status: {rec}")
+                st.markdown('<div class="badge badge-consider" style="font-size: 1.1rem; margin-bottom: 16px;">Status: Consider</div>', unsafe_allow_html=True)
             else:
-                st.error(f"### Status: {rec}")
+                st.markdown('<div class="badge badge-rejected" style="font-size: 1.1rem; margin-bottom: 16px;">Status: Rejected</div>', unsafe_allow_html=True)
 
-            st.metric("Final Score", f"{cand['final_score']}%")
+            st.metric("Final Match Score", f"{cand['final_score']}%")
             st.metric("Skill Match Score", f"{cand['skill_score']}%")
             st.metric("Experience Score", f"{cand['experience_score']}%")
             st.metric("Total Experience", f"{cand['experience_years']} Years")
 
             st.divider()
-            st.markdown("**Contact & File Metadata**")
+            st.markdown("#### Contact & File Metadata")
             st.text(f"Email: {cand['email']}")
             st.text(f"Phone: {cand['phone']}")
             st.text(f"File:  {cand['resume_filename']}")
+
+    # 7. Footer
+    st.markdown(
+        """
+        <div class="app-footer">
+            <b>Resume Screening Automation System</b><br>
+            Built with Python, Streamlit, spaCy, and NLP<br>
+            Developed by <b>Swetha Battula</b>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 if __name__ == "__main__":
