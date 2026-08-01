@@ -1,7 +1,7 @@
 """Streamlit Frontend Application for Resume Screening Automation System.
 
-Provides a modern dashboard presentation layer built with native Streamlit components
-(st.columns, st.container, st.markdown, st.write) and custom CSS styling.
+Provides a recruiter-style dashboard presentation layer built with native Streamlit components
+(st.columns, st.container, st.markdown, st.write, st.progress) and custom CSS styling.
 Does not import pandas directly or indirectly.
 """
 
@@ -31,13 +31,24 @@ st.set_page_config(
 )
 
 
-# Inject Custom CSS for Modern Dark Dashboard Appearance
+# Inject Custom CSS for Modern Dark Dashboard & Streamlit Chrome Removal
 st.markdown(
     """
     <style>
+    /* Hide Streamlit Chrome & Headers */
+    #MainMenu { visibility: hidden; }
+    header[data-testid="stHeader"] { visibility: hidden; height: 0px; }
+    footer { visibility: hidden; display: none; }
+    [data-testid="stToolbar"] { visibility: hidden; display: none; }
+    [data-testid="stStatusWidget"] { visibility: hidden; display: none; }
+    [data-testid="stDecoration"] { display: none; }
+    .stDeployButton { display: none !important; }
+    button[kind="header"] { display: none !important; }
+    [data-testid="stAppDeployButton"] { display: none !important; }
+
     /* Main Layout Adjustments */
     .block-container {
-        padding-top: 1.5rem;
+        padding-top: 1rem;
         padding-bottom: 2rem;
     }
     
@@ -115,6 +126,22 @@ st.markdown(
         margin-top: 4px;
     }
 
+    /* Candidate Initials Avatar Circle */
+    .avatar-circle {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #60a5fa;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
     /* Status Badges */
     .badge {
         padding: 4px 12px;
@@ -161,6 +188,17 @@ st.markdown(
         display: inline-block;
         margin: 3px;
     }
+    .skill-tag-more {
+        background-color: #334155;
+        color: #cbd5e1;
+        border: 1px solid #475569;
+        font-size: 0.78rem;
+        padding: 3px 8px;
+        border-radius: 6px;
+        display: inline-block;
+        margin: 3px;
+        font-weight: 500;
+    }
 
     /* Footer */
     .app-footer {
@@ -181,6 +219,18 @@ st.markdown(
 def get_cached_skills_db():
     """Loads and caches technical skills database once into memory."""
     return load_skills_db(config.SKILLS_FILE_PATH)
+
+
+def get_candidate_initials(name: str) -> str:
+    """Generates 2-letter uppercase initials from candidate name."""
+    if not name or name == "Unknown Candidate":
+        return "UC"
+    parts = [p.strip() for p in name.split() if p.strip()]
+    if len(parts) >= 2:
+        return f"{parts[0][0]}{parts[-1][0]}".upper()
+    elif len(parts) == 1:
+        return parts[0][:2].upper()
+    return "CD"
 
 
 def main():
@@ -210,7 +260,7 @@ def main():
     # Load Skills DB
     skills_db = get_cached_skills_db()
 
-    # 4. Improved Sidebar Controls
+    # Sidebar Controls
     st.sidebar.markdown("### Screening Setup")
     st.sidebar.markdown("Upload a Job Description and PDF resumes to execute automated candidate screening.")
 
@@ -335,7 +385,7 @@ def main():
 
     st.divider()
 
-    # 3. Modern Dashboard Metric Cards
+    # Executive Overview Metric Cards
     metrics = get_screening_summary_metrics(results)
 
     m1, m2, m3, m4 = st.columns(4)
@@ -382,44 +432,64 @@ def main():
 
     st.divider()
 
-    # Main Tab Layout: Results Table & Candidate Detail View
-    tab_table, tab_details = st.tabs(["Candidate Rankings Table", "Detailed Candidate Card"])
+    # Main Tab Layout: Recruiter Candidate Rankings Dashboard & Candidate Detail Card
+    tab_rankings, tab_details = st.tabs(["Candidate Rankings", "Detailed Candidate Card"])
 
-    # 5. Improved Candidate Screening Results Table
-    with tab_table:
-        st.subheader("Candidate Screening Results")
+    # TAB 1: Recruiter Candidate Rankings Cards
+    with tab_rankings:
+        st.subheader("Candidate Rankings")
 
-        table_records = format_candidate_table_records(results)
-
-        if table_records:
-            # Custom Header Row
-            h1, h2, h3, h4, h5 = st.columns([2.5, 1.2, 3.5, 1.2, 1.5])
-            h1.markdown("**Candidate Name**")
-            h2.markdown("**Experience**")
-            h3.markdown("**Matched Skills**")
-            h4.markdown("**Score**")
-            h5.markdown("**Recommendation**")
-            st.divider()
-
-            # Custom Data Rows
-            for row in table_records:
-                with st.container():
-                    c1, c2, c3, c4, c5 = st.columns([2.5, 1.2, 3.5, 1.2, 1.5])
-                    c1.write(row.get("Candidate Name", "Unknown"))
-                    c2.write(row.get("Experience", "0 yrs"))
-                    c3.write(row.get("Matched Skills", "None"))
-                    c4.write(row.get("Final Score", "0.0%"))
-
-                    rec = row.get("Recommendation", "N/A")
+        for rank_idx, cand in enumerate(results, 1):
+            with st.container():
+                c_left, c_mid, c_right = st.columns([1.2, 3.8, 4.0])
+                
+                # Initials Avatar & Rank Number
+                initials = get_candidate_initials(cand["candidate_name"])
+                with c_left:
+                    st.markdown(
+                        f"""
+                        <div style="display: flex; align-items: center; gap: 12px; padding-top: 8px;">
+                            <span style="font-weight: 700; color: #94a3b8; font-size: 1.1rem;">#{rank_idx}</span>
+                            <div class="avatar-circle">{initials}</div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                
+                # Candidate Name, Experience & Progress Bar
+                with c_mid:
+                    st.markdown(f"#### **{cand['candidate_name']}**")
+                    st.caption(f"Experience: **{cand['experience_years']} Years** | File: `{cand['resume_filename']}`")
+                    
+                    score_val = float(cand["final_score"])
+                    st.progress(min(max(score_val / 100.0, 0.0), 1.0), text=f"Match Score: {score_val}%")
+                
+                # Recommendation Status Pill & Top 5 Matched Skills
+                with c_right:
+                    rec = cand["recommendation"]
                     if rec == "Shortlisted":
-                        c5.markdown('<span class="badge badge-shortlisted">Shortlisted</span>', unsafe_allow_html=True)
+                        pill_html = '<span class="badge badge-shortlisted">Shortlisted</span>'
                     elif rec == "Consider":
-                        c5.markdown('<span class="badge badge-consider">Consider</span>', unsafe_allow_html=True)
+                        pill_html = '<span class="badge badge-consider">Consider</span>'
                     else:
-                        c5.markdown('<span class="badge badge-rejected">Rejected</span>', unsafe_allow_html=True)
-                    st.divider()
+                        pill_html = '<span class="badge badge-rejected">Rejected</span>'
+                        
+                    st.markdown(f'<div style="text-align: right; margin-bottom: 8px;">{pill_html}</div>', unsafe_allow_html=True)
+                    
+                    matched = cand.get("matched_skills", [])
+                    if matched:
+                        top_skills = matched[:5]
+                        remaining_count = len(matched) - 5
+                        tags_html = "".join([f'<span class="skill-tag-matched">{s}</span>' for s in top_skills])
+                        if remaining_count > 0:
+                            tags_html += f'<span class="skill-tag-more">+{remaining_count} more</span>'
+                        st.markdown(f'<div><span style="font-size:0.8rem; color:#94a3b8;">Matched Skills:</span><br>{tags_html}</div>', unsafe_allow_html=True)
+                    else:
+                        st.caption("No matching JD skills found.")
+                
+                st.divider()
 
-        # Download Buttons Section
+        # Export Reports Section
         st.subheader("Export Results")
         d1, d2 = st.columns(2)
 
@@ -441,7 +511,7 @@ def main():
             use_container_width=True
         )
 
-    # 6. Improved Detailed Candidate Profile Page
+    # TAB 2: Detailed Candidate Card
     with tab_details:
         st.subheader("Detailed Candidate Profile")
 
@@ -503,7 +573,7 @@ def main():
             st.text(f"Phone: {cand['phone']}")
             st.text(f"File:  {cand['resume_filename']}")
 
-    # 7. Footer
+    # Footer
     st.markdown(
         """
         <div class="app-footer">
