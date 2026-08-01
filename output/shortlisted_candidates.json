@@ -34,9 +34,9 @@
     "experience_years": 6.0,
     "resume_filename": "alice_johnson_senior_python_developer.pdf",
     "resume_path": "C:\\Users\\sweth\\.gemini\\antigravity\\scratch\\ResumeScreeningAutomation\\data\\sample_resumes\\alice_johnson_senior_python_developer.pdf",
-    "skill_score": 73.08,
+    "skill_score": 79.17,
     "experience_score": 100.0,
-    "final_score": 78.46,
+    "final_score": 83.33,
     "matched_skills": [
       "aws",
       "ci/cd",
@@ -59,16 +59,14 @@
       "sql"
     ],
     "missing_skills": [
-      "artificial intelligence",
-      "data pipelines",
       "data science",
       "mongodb",
       "natural language processing",
       "system architecture",
       "unit testing"
     ],
-    "recommendation": "Consider",
-    "summary": "Alice Johnson brings approximately 6.0 years of professional experience possessing a background in Computer Science, Master Of Science. Demonstrates strong technical alignment with key matched skills including aws, ci/cd, django, docker. Achieved an overall match score of 78.46% and is categorized as 'Consider'.",
+    "recommendation": "Shortlisted",
+    "summary": "Alice Johnson brings approximately 6.0 years of professional experience possessing a background in Computer Science, Master Of Science. Demonstrates strong technical alignment with key matched skills including aws, ci/cd, django, docker. Achieved an overall match score of 83.33% and is categorized as 'Shortlisted'.",
     "extraction_status": "Success"
   },
   {
@@ -102,11 +100,10 @@
     "experience_years": 3.5,
     "resume_filename": "bob_smith_data_scientist.pdf",
     "resume_path": "C:\\Users\\sweth\\.gemini\\antigravity\\scratch\\ResumeScreeningAutomation\\data\\sample_resumes\\bob_smith_data_scientist.pdf",
-    "skill_score": 53.85,
+    "skill_score": 54.17,
     "experience_score": 100.0,
-    "final_score": 63.08,
+    "final_score": 63.33,
     "matched_skills": [
-      "data pipelines",
       "data science",
       "docker",
       "git",
@@ -122,7 +119,6 @@
       "sql"
     ],
     "missing_skills": [
-      "artificial intelligence",
       "aws",
       "ci/cd",
       "django",
@@ -136,7 +132,7 @@
       "unit testing"
     ],
     "recommendation": "Consider",
-    "summary": "Bob Smith brings approximately 3.5 years of professional experience possessing a background in Bachelor Of Science, Data Science. Demonstrates strong technical alignment with key matched skills including data pipelines, data science, docker, git. Achieved an overall match score of 63.08% and is categorized as 'Consider'.",
+    "summary": "Bob Smith brings approximately 3.5 years of professional experience possessing a background in Bachelor Of Science, Data Science. Demonstrates strong technical alignment with key matched skills including data science, docker, git, machine learning. Achieved an overall match score of 63.33% and is categorized as 'Consider'.",
     "extraction_status": "Success"
   },
   {
@@ -153,17 +149,15 @@
     "experience_years": 1.0,
     "resume_filename": "charlie_brown_junior_dev.pdf",
     "resume_path": "C:\\Users\\sweth\\.gemini\\antigravity\\scratch\\ResumeScreeningAutomation\\data\\sample_resumes\\charlie_brown_junior_dev.pdf",
-    "skill_score": 3.85,
+    "skill_score": 4.17,
     "experience_score": 33.33,
-    "final_score": 9.74,
+    "final_score": 10.0,
     "matched_skills": [
       "git"
     ],
     "missing_skills": [
-      "artificial intelligence",
       "aws",
       "ci/cd",
-      "data pipelines",
       "data science",
       "django",
       "docker",
@@ -187,7 +181,7 @@
       "unit testing"
     ],
     "recommendation": "Rejected",
-    "summary": "Charlie Brown brings approximately 1.0 years of professional experience. Demonstrates strong technical alignment with key matched skills including git. Achieved an overall match score of 9.74% and is categorized as 'Rejected'.",
+    "summary": "Charlie Brown brings approximately 1.0 years of professional experience. Demonstrates strong technical alignment with key matched skills including git. Achieved an overall match score of 10.0% and is categorized as 'Rejected'.",
     "extraction_status": "Success"
   }
 ]

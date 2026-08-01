@@ -242,6 +242,34 @@ def parse_candidate_resume(
     }
 
 
+def extract_jd_required_skills(raw_text: str, skills_db: Set[str]) -> Set[str]:
+    """Extracts required skills from Job Description, prioritizing explicit skills sections.
+
+    Args:
+        raw_text (str): Raw JD text.
+        skills_db (Set[str]): Preloaded skills dataset.
+
+    Returns:
+        Set[str]: Extracted set of required skills.
+    """
+    if not raw_text or not skills_db:
+        return set()
+
+    # Search for explicit required skills / technical skills section
+    section_pattern = re.compile(
+        r"(?:required\s*(?:technical\s*)?skills|requirements|technical\s*skills|key\s*skills|qualifications)[\s:-]+(.*?)(?=\n\s*\n[A-Z]|\Z)",
+        re.IGNORECASE | re.DOTALL
+    )
+    matches = section_pattern.findall(raw_text)
+    if matches:
+        focused_text = " ".join(matches)
+        focused_skills = extract_skills(focused_text, skills_db)
+        if len(focused_skills) >= 3:
+            return focused_skills
+
+    return extract_skills(raw_text, skills_db)
+
+
 def parse_job_description(
     jd_input: Union[str, Path],
     skills_db: Set[str]
@@ -285,7 +313,7 @@ def parse_job_description(
     else:
         raw_text = ""
 
-    required_skills = extract_skills(raw_text, skills_db)
+    required_skills = extract_jd_required_skills(raw_text, skills_db)
     required_exp = extract_experience_years(raw_text)
     if required_exp <= 0.0:
         required_exp = config.DEFAULT_REQUIRED_EXPERIENCE_YEARS

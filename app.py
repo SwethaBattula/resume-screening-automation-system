@@ -1,8 +1,8 @@
 """Streamlit Frontend Application for Resume Screening Automation System.
 
-Serves purely as a presentation layer for the backend screening engine.
-All processing, metric calculation, data formatting, and report string generation
-are delegated to backend modules.
+Provides a clean presentation layer for uploading Job Descriptions and PDF resumes,
+visualizing candidate match scores, reading executive candidate summaries,
+and downloading CSV/JSON reports.
 """
 
 import tempfile
@@ -122,7 +122,7 @@ def main():
 
                 # Run Backend Screening Pipeline
                 progress_bar.progress(40, text="Running PDF extraction & NLP preprocessing...")
-                
+
                 try:
                     results = process_resume_batch(
                         pdf_paths=pdf_paths,
@@ -170,24 +170,18 @@ def main():
     with tab_table:
         st.subheader("Candidate Screening Results")
 
-        # Format dataframe for clean Streamlit table display (Delegated to Backend)
+        # Format records for clean table display without pandas
         table_records = format_candidate_table_records(results)
 
-        st.dataframe(
-            table_records,
-            column_config={
-                "Final Score": st.column_config.TextColumn("Final Score", help="Weighted 80% Skill + 20% Exp Match Score"),
-                "Recommendation": st.column_config.TextColumn("Recommendation"),
-            },
-            use_container_width=True,
-            hide_index=True
-        )
+        # Render plain Python list[dict] using st.table()
+        if table_records:
+            st.table(table_records)
 
         # Download Buttons Section
         st.subheader("📥 Export Results")
         d1, d2 = st.columns(2)
 
-        # Prepare CSV Data (Delegated to Backend Exporter)
+        # Prepare CSV Data
         csv_data = generate_csv_string(results)
 
         d1.download_button(
@@ -198,7 +192,7 @@ def main():
             use_container_width=True
         )
 
-        # Prepare JSON Data (Delegated to Backend Exporter)
+        # Prepare JSON Data
         json_data = generate_json_string(results)
 
         d2.download_button(
